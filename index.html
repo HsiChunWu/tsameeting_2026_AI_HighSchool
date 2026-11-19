@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AI 輔助學測數學｜簡報與互動教材</title>
+<meta name="description" content="「關掉 AI，你還會嗎？」學生場與老師場簡報，115 學測數學 A・B 互動講義，以及示範遊戲「公式守衛」。">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📐</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fbfcfe;
+  --grid:#e3ebf5;
+  --ink:#1f3a5f;
+  --text:#2b3340;
+  --muted:#5d6878;
+  --line:#c9d5e4;
+  --pen:#c8302c;
+  --surface:#ffffff;
+  --sans:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --serif:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#141a22;--grid:#1c2531;--ink:#9cc0ea;--text:#dbe2ec;--muted:#9aa6b6;
+    --line:#2c3a4c;--pen:#ff7a6e;--surface:#18202b;color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#141a22;--grid:#1c2531;--ink:#9cc0ea;--text:#dbe2ec;--muted:#9aa6b6;
+  --line:#2c3a4c;--pen:#ff7a6e;--surface:#18202b;color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;font-family:var(--sans);color:var(--text);line-height:1.75;font-size:1.0625rem;
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:28px 28px;
+}
+a{color:var(--ink)}
+:focus-visible{outline:3px solid var(--pen);outline-offset:3px;border-radius:4px}
+.wrap{max-width:68rem;margin:0 auto;padding:0 1.25rem}
+
+/* Hero */
+header{padding:4.5rem 0 3rem}
+.hero{display:grid;grid-template-columns:1.25fr 1fr;gap:3rem;align-items:center}
+h1{font-family:var(--serif);font-weight:900;color:var(--ink);font-size:clamp(2.4rem,6vw,4.2rem);line-height:1.2;margin:0 0 1.25rem;letter-spacing:.02em}
+.lede{max-width:34em;color:var(--muted);margin:0}
+.sheet{
+  background:var(--surface);border:1px solid var(--line);border-radius:3px;
+  padding:1.5rem 1.6rem 1.3rem;transform:rotate(-1.2deg);
+  box-shadow:6px 8px 0 var(--grid);font-size:1.05rem;
+}
+.sheet .q{color:var(--muted);font-size:.9rem;margin:0 0 .4rem}
+.sheet .eq{font-family:"Cambria Math","Times New Roman",serif;font-size:1.25rem;margin:0 0 .25rem;color:var(--text)}
+.sheet .wrong{position:relative;display:inline-block}
+.sheet .wrong::after{
+  content:"";position:absolute;left:-4px;right:-4px;top:52%;height:2px;background:var(--pen);transform:rotate(-4deg);
+}
+.sheet .note{
+  margin:.9rem 0 0;color:var(--pen);font-size:.98rem;border-left:2px solid var(--pen);padding-left:.75rem;line-height:1.6
+}
+
+/* Sections */
+section{padding:2.5rem 0}
+h2{font-family:var(--serif);font-weight:600;color:var(--ink);font-size:1.6rem;margin:0 0 .4rem}
+.sub{color:var(--muted);margin:0 0 1.5rem;max-width:40em}
+
+/* Deck switcher */
+.tabs{display:flex;gap:0;border:1px solid var(--line);border-radius:999px;width:max-content;max-width:100%;background:var(--surface);padding:3px;margin-bottom:1rem}
+.tabs button{
+  font:inherit;font-size:.98rem;border:0;background:none;color:var(--muted);
+  padding:.45rem 1.15rem;border-radius:999px;cursor:pointer
+}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--paper);font-weight:500}
+.deck-desc{margin:0 0 1rem;color:var(--text)}
+.viewer{
+  position:relative;width:100%;aspect-ratio:16/10;background:var(--surface);
+  border:1px solid var(--line);border-radius:6px;overflow:hidden
+}
+.viewer iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.viewer .fallback{
+  position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;
+  text-align:center;padding:2rem;color:var(--muted);gap:.5rem
+}
+.actions{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:1rem}
+.btn{
+  display:inline-flex;align-items:center;gap:.4rem;text-decoration:none;font-size:.95rem;
+  padding:.5rem 1rem;border-radius:6px;border:1px solid var(--line);background:var(--surface);color:var(--ink)
+}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.btn:hover{border-color:var(--ink)}
+
+/* Materials */
+.materials{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.item{
+  background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--ink);
+  border-radius:4px;padding:1.4rem 1.5rem 1.5rem;display:flex;flex-direction:column
+}
+.item h3{font-family:var(--serif);font-weight:600;font-size:1.3rem;margin:0 0 .5rem;color:var(--ink)}
+.item p{margin:0 0 1rem;color:var(--text)}
+.item .meta{color:var(--muted);font-size:.88rem;margin-top:auto;margin-bottom:1rem}
+.item .btn{align-self:flex-start}
+
+footer{padding:2.5rem 0 3.5rem;color:var(--muted);font-size:.88rem;border-top:1px solid var(--line);margin-top:2rem}
+footer p{margin:.25rem 0;max-width:48em}
+
+@media (max-width:760px){
+  header{padding:3rem 0 2rem}
+  .hero{grid-template-columns:1fr;gap:2rem}
+  .sheet{transform:none}
+  .materials{grid-template-columns:1fr}
+  .viewer{aspect-ratio:4/3}
+}
+@media (prefers-reduced-motion:no-preference){
+  .sheet .wrong::after{transform-origin:left;animation:strike .6s .5s ease-out both}
+  @keyframes strike{from{transform:rotate(-4deg) scaleX(0)}to{transform:rotate(-4deg) scaleX(1)}}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap hero">
+    <div>
+      <h1>關掉 AI，<br>你還會嗎？</h1>
+      <p class="lede">用 AI 工具準備學測數學的兩場分享：學生場談怎麼讓 AI 只給提示、自己把題目做完；老師場談備課、看出 AI 作答的線索，以及課堂規範與評量。以下是簡報與會後資源。</p>
+    </div>
+    <div class="sheet" aria-label="簡報中的示範錯解">
+      <p class="q">某生的解法：解不等式</p>
+      <p class="eq">x² − 5x + 6 &gt; 0</p>
+      <p class="eq">(x − 2)(x − 3) &gt; 0</p>
+      <p class="eq">所以&nbsp;&nbsp;<span class="wrong">2 &lt; x &lt; 3</span></p>
+      <p class="note">提示：代 x = 2.5 進去試試看，(2.5 − 2)(2.5 − 3) 是正的嗎？</p>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="slides">
+    <div class="wrap">
+      <h2>簡報</h2>
+      <p class="sub">直接在網頁上翻頁，或下載 PowerPoint 檔。</p>
+
+      <div class="tabs" role="tablist" aria-label="選擇場次">
+        <button role="tab" id="tab-student" aria-controls="viewer" aria-selected="true" data-deck="student">學生場</button>
+        <button role="tab" id="tab-teacher" aria-controls="viewer" aria-selected="false" data-deck="teacher">老師場</button>
+      </div>
+      <p class="deck-desc" id="deck-desc"></p>
+
+      <div class="viewer" id="viewer" role="tabpanel" aria-live="polite"></div>
+
+      <div class="actions">
+        <a class="btn primary" id="btn-download" download>下載 PowerPoint</a>
+        <a class="btn" id="btn-open" target="_blank" rel="noopener">在新分頁全螢幕開啟</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="materials">
+    <div class="wrap">
+      <h2>互動教材</h2>
+      <p class="sub">兩份都是單一 HTML 檔，可以直接在瀏覽器開啟，也可以另存到電腦離線使用。</p>
+
+      <div class="materials">
+        <article class="item">
+          <h3>115 學測數學 A・B 互動講義</h3>
+          <p>數 A、數 B 各 20 題，共 40 題。每題分六步：原題、觀念、AI 提示、練習、常見問題、答案核對，附可直接複製的提示詞。</p>
+          <p class="meta">約 6.7 MB，第一次開啟需要等幾秒。原題與答案來源：大考中心。</p>
+          <a class="btn primary" href="115學測數學AB_互動講義.html">開啟互動講義</a>
+        </article>
+        <article class="item">
+          <h3>公式守衛</h3>
+          <p>數學塔防示範遊戲。出牌就要作答，答對卡牌才有效果；答錯時只給提示，想好了再看答案。目前有指對數、三角函數兩關。</p>
+          <p class="meta">原創題，數值尚未經學生實測。</p>
+          <a class="btn primary" href="公式守衛.html">開始遊戲</a>
+        </article>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p>官方原題與答案以大考中心公告為準；講義中的教學補充、AI 提示與遊戲題目為自編教學素材。</p>
+    <p><a href="https://github.com/HsiChunWu/tsameeting_2026_AI_HighSchool">GitHub 原始檔</a></p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var decks = {
+    student: {
+      file: "AI輔助學測數學_學生場.pptx",
+      desc: "23 張投影片。怎麼判斷自己真的學會、AI 常見的三種錯、兩段可直接複製的提示詞、錯題紀錄怎麼寫。"
+    },
+    teacher: {
+      file: "AI輔助學測數學_老師場.pptx",
+      desc: "28 張投影片。讓 AI 起草、老師把關的備課方式，學生可能用了 AI 的線索與求證流程，作業的 AI 使用等級與評量設計。"
+    }
+  };
+
+  var viewer = document.getElementById("viewer");
+  var desc = document.getElementById("deck-desc");
+  var dl = document.getElementById("btn-download");
+  var openBtn = document.getElementById("btn-open");
+  var tabs = document.querySelectorAll('.tabs [role="tab"]');
+
+  // Office 線上檢視器需要公開網址；在本機（file:// 或 localhost）預覽時無法嵌入
+  var isPublic = /^https?:$/.test(location.protocol) &&
+                 !/^(localhost|127\.|192\.168\.|10\.)/.test(location.hostname);
+
+  function absUrl(file){ return new URL(file, location.href).href; }
+
+  function show(key){
+    var d = decks[key];
+    tabs.forEach(function(t){
+      var on = t.dataset.deck === key;
+      t.setAttribute("aria-selected", on ? "true" : "false");
+      t.tabIndex = on ? 0 : -1;
+    });
+    viewer.setAttribute("aria-labelledby", "tab-" + key);
+    desc.textContent = d.desc;
+    dl.href = d.file;
+    viewer.innerHTML = "";
+
+    if (isPublic) {
+      var src = encodeURIComponent(absUrl(d.file));
+      var frame = document.createElement("iframe");
+      frame.src = "https://view.officeapps.live.com/op/embed.aspx?src=" + src;
+      frame.title = (key === "student" ? "學生場" : "老師場") + "簡報";
+      frame.loading = "lazy";
+      frame.allowFullscreen = true;
+      viewer.appendChild(frame);
+      openBtn.href = "https://view.officeapps.live.com/op/view.aspx?src=" + src;
+      openBtn.hidden = false;
+    } else {
+      viewer.innerHTML =
+        '<div class="fallback"><strong>網頁版簡報需要放上公開網址才能顯示</strong>' +
+        '<span>目前是在本機開啟，請先下載 PowerPoint 檔觀看。</span></div>';
+      openBtn.hidden = true;
+    }
+    if (location.hash !== "#" + key) history.replaceState(null, "", "#" + key);
+  }
+
+  tabs.forEach(function(t, i){
+    t.addEventListener("click", function(){ show(t.dataset.deck); });
+    t.addEventListener("keydown", function(e){
+      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+      var n = tabs[(i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length];
+      n.focus(); show(n.dataset.deck);
+    });
+  });
+
+  var start = location.hash.slice(1);
+  show(decks[start] ? start : "student");
+})();
+</script>
+</body>
+</html>
